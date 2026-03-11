@@ -1,5 +1,5 @@
-import { isPast, MAX_GROUP } from "./constants";
-import { getSlotStatus, getOpenBooking, slotKey } from "./utils";
+import { isSlotPast, MAX_GROUP } from "./constants";
+import { getSlotStatus, getOpenBooking } from "./utils";
 
 /**
  * SlotBtn
@@ -9,13 +9,14 @@ import { getSlotStatus, getOpenBooking, slotKey } from "./utils";
  *   slot      object     — slot object from ALL_SLOTS
  *   showTime  bool       — whether to prefix the button label with the time
  *   bookings  object     — full bookings map from Scheduler state
+ *   timezone  string     — IANA timezone string e.g. "America/New_York"
  *   onBook    fn(date, slot)              — called when user wants to book
  *   onJoin    fn(date, slot, bookingId)   — called when user wants to join
  */
-export default function SlotBtn({ date, slot, showTime = true, bookings, onBook, onJoin }) {
+export default function SlotBtn({ date, slot, showTime = true, bookings, timezone, onBook, onJoin }) {
   const status      = getSlotStatus(bookings, date, slot);
   const openBooking = getOpenBooking(bookings, date, slot);
-  const past        = isPast(date);
+  const past        = isSlotPast(date, slot, timezone);
 
   const colorCls = status === "available" ? "br-slot-open"
                  : status === "joinable"  ? "br-slot-join"

@@ -16,16 +16,20 @@ const MAX_GROUP = 4;
  * (current view, anchor date, bookings, modal) and passes props down.
  *
  * Props:
- *   courseName    string   — display name shown in the header
- *   courseSubtitle string  — subtitle line shown below the name
- *   footerNote    string   — small print at the bottom
- *   initialView   string   — "day" | "week" | "month"  (default: "week")
+ *   courseName     string   — display name shown in the header
+ *   courseSubtitle string   — subtitle line shown below the name
+ *   footerNote     string   — small print at the bottom
+ *   initialView    string   — "day" | "week" | "month"  (default: "week")
+ *   timezone       string   — IANA timezone for the course, e.g. "America/New_York"
+ *                             Used to correctly grey out past slots regardless of
+ *                             where the visitor's browser is located.
  */
 export default function Scheduler({
   courseName     = "Big Rock Disc Golf",
   courseSubtitle = "WATERBURY CENTER, VT · NON-MEMBER TEE TIMES · $10/ROUND",
   footerNote     = "Members may walk on at any time · Non-members must book & pay $10/round · Private land — no walk-ons",
   initialView    = "week",
+  timezone       = "America/New_York",
 }) {
   const [view,     setView]     = useState(initialView);
   const [anchor,   setAnchor]   = useState(new Date());
@@ -154,10 +158,10 @@ export default function Scheduler({
         {/* Calendar view */}
         <div className="br-card">
           {view === "day" && (
-            <DayView anchor={anchor} bookings={bookings} onBook={openBook} onJoin={openJoin} />
+            <DayView anchor={anchor} bookings={bookings} timezone={timezone} onBook={openBook} onJoin={openJoin} />
           )}
           {view === "week" && (
-            <WeekView anchor={anchor} bookings={bookings} onBook={openBook} onJoin={openJoin} onDayClick={goToDay} />
+            <WeekView anchor={anchor} bookings={bookings} timezone={timezone} onBook={openBook} onJoin={openJoin} onDayClick={goToDay} />
           )}
           {view === "month" && (
             <MonthView anchor={anchor} bookings={bookings} onDayClick={goToDay} />

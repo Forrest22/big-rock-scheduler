@@ -1,4 +1,4 @@
-import { ALL_SLOTS, DAYS_SHORT, isSameDay, getMonthGrid } from "./constants";
+import { ALL_SLOTS, DAYS_SHORT, isSameDay, isPast, getMonthGrid } from "./constants";
 import { getSlotStatus } from "./utils";
 
 /**
@@ -27,20 +27,22 @@ export default function MonthView({ anchor, bookings, onDayClick }) {
         {grid.map((d, i) => {
           if (!d) return <div key={i} className="br-month-cell br-empty" />;
 
+          const past      = isPast(d);
+          const isToday   = isSameDay(d, today);
           const statuses  = ALL_SLOTS.map(s => getSlotStatus(bookings, new Date(d), s));
           const openCount = statuses.filter(s => s === "available").length;
           const joinCount = statuses.filter(s => s === "joinable").length;
-          const isToday   = isSameDay(d, today);
 
           return (
             <div
               key={i}
-              className={`br-month-cell${isToday ? " br-today-cell" : ""}`}
-              onClick={() => onDayClick(new Date(d))}
+              className={`br-month-cell${isToday ? " br-today-cell" : ""}${past ? " br-empty" : ""}`}
+              onClick={() => !past && onDayClick(new Date(d))}
+              style={past ? { opacity: 0.35, cursor: "not-allowed", pointerEvents: "none" } : {}}
             >
               <div className="br-month-num">{d.getDate()}</div>
-              {openCount > 0 && <span className="br-month-badge br-badge-open">🟢 {openCount} open</span>}
-              {joinCount > 0 && <span className="br-month-badge br-badge-join">🔵 {joinCount} join</span>}
+              {!past && openCount > 0 && <span className="br-month-badge br-badge-open">🟢 {openCount} open</span>}
+              {!past && joinCount > 0 && <span className="br-month-badge br-badge-join">🔵 {joinCount} join</span>}
             </div>
           );
         })}

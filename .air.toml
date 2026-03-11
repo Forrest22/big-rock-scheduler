@@ -1,0 +1,12 @@
+root = "."
+tmp_dir = "tmp"
+
+[build]
+  cmd = "go build -o ./tmp/server ./backend"
+  entrypoint = "./tmp/server"
+  delay = 1000
+  exclude_dir = ["frontend", "tmp"]
+  include_ext = ["go"]
+
+[misc]
+  clean_on_exit = true

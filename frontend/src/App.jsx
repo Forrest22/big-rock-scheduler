@@ -7,6 +7,7 @@ export default function App() {
       courseSubtitle="WATERBURY CENTER, VT · NON-MEMBER TEE TIMES · $10/ROUND"
       footerNote="Members may walk on at any time · Non-members must book & pay $10/round · Private land — no walk-ons"
       initialView="week"
+      timezone="America/New_York"
     />
   );
 }

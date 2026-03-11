@@ -1,5 +1,5 @@
-import { ALL_SLOTS, DAYS_SHORT, MAX_GROUP, isSameDay, getWeekDates, isPast } from "./constants";
-import { getSlotStatus, getOpenBooking, slotKey } from "./utils";
+import { ALL_SLOTS, DAYS_SHORT, MAX_GROUP, isSameDay, getWeekDates, isSlotPast } from "./constants";
+import { getSlotStatus, getOpenBooking } from "./utils";
 
 /**
  * WeekView
@@ -7,11 +7,12 @@ import { getSlotStatus, getOpenBooking, slotKey } from "./utils";
  * Props:
  *   anchor      Date     — anchor date (any day in the target week)
  *   bookings    object   — full bookings map
+ *   timezone    string   — IANA timezone string e.g. "America/New_York"
  *   onBook      fn(date, slot)
  *   onJoin      fn(date, slot, bookingId)
- *   onDayClick  fn(date) — called when user clicks a day number to drill into DayView
+ *   onDayClick  fn(date) — drill into DayView
  */
-export default function WeekView({ anchor, bookings, onBook, onJoin, onDayClick }) {
+export default function WeekView({ anchor, bookings, timezone, onBook, onJoin, onDayClick }) {
   const days  = getWeekDates(anchor);
   const today = new Date();
 
@@ -42,13 +43,13 @@ export default function WeekView({ anchor, bookings, onBook, onJoin, onDayClick 
           <div key={slot.id} className="br-week-row">
             <div className="br-week-time">{slot.label}</div>
             {days.map((d, i) => {
-              const date    = new Date(d);
-              const status  = getSlotStatus(bookings, date, slot);
-              const past    = isPast(date);
-              const openB   = getOpenBooking(bookings, date, slot);
-              const dot     = status === "available" ? "🟢"
-                            : status === "joinable"  ? "🔵"
-                            : "🔴";
+              const date   = new Date(d);
+              const status = getSlotStatus(bookings, date, slot);
+              const past   = isSlotPast(date, slot, timezone);
+              const openB  = getOpenBooking(bookings, date, slot);
+              const dot    = status === "available" ? "🟢"
+                           : status === "joinable"  ? "🔵"
+                           : "🔴";
               return (
                 <div key={i} className="br-week-cell">
                   <button
